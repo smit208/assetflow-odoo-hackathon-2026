@@ -66,3 +66,5 @@ const useAuthStore = create((set, get) => ({
 }))
 
 export default useAuthStore
+
+// Role escalation only via admin in OrgSetup
