@@ -103,3 +103,5 @@ export async function getBookingsForResource(resourceId) {
     profiles: profileMap[b.booked_by_user_id] || null
   }))
 }
+
+// Overlap check: StartA < EndB AND EndA > StartB
