@@ -144,3 +144,5 @@ export default function ActivityLogs() {
     </div>
   )
 }
+
+// profileMap resolves actor names from log entries
