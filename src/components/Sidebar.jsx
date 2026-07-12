@@ -306,3 +306,5 @@ export default function Sidebar() {
     </aside>
   )
 }
+
+// Active route highlighted on nav
