@@ -24,3 +24,7 @@ Thumbs.db
 brain/
 *.pbtxt
 *.pb
+
+*.ps1
+*.sh
+.oxlintrc.json
