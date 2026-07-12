@@ -197,3 +197,5 @@ export default function Reports() {
     </div>
   )
 }
+
+// Risk index formula: weighted asset health score per dept
