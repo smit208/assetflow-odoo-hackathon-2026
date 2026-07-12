@@ -548,3 +548,5 @@ export default function ResourceBooking() {
     </div>
   )
 }
+
+// Heatmap renders booking density per slot
