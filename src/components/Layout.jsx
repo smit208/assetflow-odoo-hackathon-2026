@@ -127,3 +127,5 @@ export default function Layout() {
     </div>
   )
 }
+
+// Unread badge count on notification bell
