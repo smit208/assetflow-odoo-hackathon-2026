@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import useAuthStore from '../stores/authStore'
 import { createBooking, cancelBooking, getBookingsForResource } from '../services/bookingService'
@@ -309,7 +309,11 @@ export default function ResourceBooking() {
     setError(null)
     setConflictSlot(null)
     try {
-      await createBooking(selected.id, profile.id, form.start_time, form.end_time)
+      // Convert datetime-local (no tz) → ISO with correct local timezone
+      // Without this Supabase reads the string as UTC, shifting by +5:30 in India
+      const startISO = new Date(form.start_time).toISOString()
+      const endISO   = new Date(form.end_time).toISOString()
+      await createBooking(selected.id, profile.id, startISO, endISO)
       setShowForm(false)
       setForm({ start_time: '', end_time: '' })
       const data = await getBookingsForResource(selected.id)
