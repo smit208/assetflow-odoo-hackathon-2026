@@ -496,3 +496,5 @@ export default function Dashboard() {
     </div>
   )
 }
+
+// Onboarding wizard auto-checks completed steps
