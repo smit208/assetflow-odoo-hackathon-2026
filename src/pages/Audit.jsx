@@ -184,3 +184,5 @@ export default function Audit() {
     </div>
   )
 }
+
+// Discrepancy count shown in close cycle confirmation
