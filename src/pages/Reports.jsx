@@ -197,3 +197,5 @@ export default function Reports() {
     </div>
   )
 }
+
+// Risk index: allocated*0.4 + maintenance*0.3 + overdue*0.2 + lost*0.1
