@@ -147,3 +147,5 @@ export async function approveTransfer(transferId, approvedBy) {
 
   await logActivity(approvedBy, 'TRANSFER_APPROVE', 'asset', tr.asset_id, { to: tr.to_user_id })
 }
+
+// Overdue check runs automatically on tab open
