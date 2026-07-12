@@ -274,7 +274,7 @@ export default function ResourceBooking() {
   const [selected, setSelected]       = useState(null)
   const [bookings, setBookings]       = useState([])
   const [showForm, setShowForm]       = useState(false)
-  const [form, setForm]               = useState({ start_time: '', end_time: '' })
+  const [form, setForm]               = useState({ start_time: '', end_time: '', start_iso: '', end_iso: '' })
   const [error, setError]             = useState(null)
   const [saving, setSaving]           = useState(false)
   const [conflictSlot, setConflictSlot] = useState(null) // { start, end, bookedBy }
@@ -309,13 +309,22 @@ export default function ResourceBooking() {
     setError(null)
     setConflictSlot(null)
     try {
-      // Convert datetime-local (no tz) → ISO with correct local timezone
-      // Without this Supabase reads the string as UTC, shifting by +5:30 in India
-      const startISO = new Date(form.start_time).toISOString()
-      const endISO   = new Date(form.end_time).toISOString()
+      // Use pre-computed ISO from click (exact, no tz ambiguity)
+      // If user manually edited the input, compute with explicit local offset
+      let startISO = form.start_iso
+      let endISO   = form.end_iso
+      if (!startISO || !endISO) {
+        const off = -new Date().getTimezoneOffset()
+        const s   = off >= 0 ? '+' : '-'
+        const hh  = String(Math.floor(Math.abs(off)/60)).padStart(2,'0')
+        const mm  = String(Math.abs(off)%60).padStart(2,'0')
+        const tz  = `${s}${hh}:${mm}`
+        startISO  = new Date(`${form.start_time}:00${tz}`).toISOString()
+        endISO    = new Date(`${form.end_time}:00${tz}`).toISOString()
+      }
       await createBooking(selected.id, profile.id, startISO, endISO)
       setShowForm(false)
-      setForm({ start_time: '', end_time: '' })
+      setForm({ start_time: '', end_time: '', start_iso: '', end_iso: '' })
       const data = await getBookingsForResource(selected.id)
       setBookings(data)
     } catch (err) {
@@ -344,21 +353,24 @@ export default function ResourceBooking() {
   const formRef = useRef(null)
 
   function handleSlotClick(day, hour) {
-    // Build datetime-local strings: YYYY-MM-DDTHH:mm
     const pad = n => String(n).padStart(2, '0')
     const start = new Date(day)
     start.setHours(hour, 0, 0, 0)
     const end = new Date(day)
     end.setHours(hour + 1, 0, 0, 0)
 
+    // Store the ISO now — computed directly from Date object (unambiguous local time)
+    const start_iso = start.toISOString()
+    const end_iso   = end.toISOString()
+
+    // Separate display string for the datetime-local input
     const toLocal = d =>
       `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 
-    setForm({ start_time: toLocal(start), end_time: toLocal(end) })
+    setForm({ start_time: toLocal(start), end_time: toLocal(end), start_iso, end_iso })
     setShowForm(true)
     setError(null)
     setConflictSlot(null)
-    // Scroll form into view after render
     setTimeout(() => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 60)
   }
 
